@@ -30,17 +30,13 @@ def product(n, term):
     >>> product(3, triple)    # 1*3 * 2*3 * 3*3
     162
     """
-    "*** YOUR CODE HERE ***"
-
+    ans = 1
+    for i in range(n):
+        ans *= term(i + 1)
+    return ans
 
 def accumulate(combiner, base, n, term):
-    """Return the result of combining the first n terms in a sequence and base.
-    The terms to be combined are term(1), term(2), ..., term(n).  combiner is a
-    two-argument commutative function.
-
-    >>> accumulate(add, 0, 5, identity)  # 0 + 1 + 2 + 3 + 4 + 5
-    15
-    >>> accumulate(add, 11, 5, identity) # 11 + 1 + 2 + 3 + 4 + 5
+    """Return the resultidentity11, 5, identity) # 11 + 1 + 2 + 3 + 4 + 5
     26
     >>> accumulate(add, 11, 0, identity) # 11
     11
@@ -55,7 +51,10 @@ def accumulate(combiner, base, n, term):
     >>> accumulate(lambda x, y: (x + y) % 17, 19, 20, square)
     16
     """
-    "*** YOUR CODE HERE ***"
+    ans = base
+    for i in range(n):
+        ans = combiner(ans, term(i + 1))
+    return ans
 
 def summation_using_accumulate(n, term):
     """Returns the sum of term(1) + ... + term(n). The implementation
@@ -71,7 +70,7 @@ def summation_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    return accumulate(add, 0, n , term)
 
 def product_using_accumulate(n, term):
     """An implementation of product using accumulate.
@@ -86,8 +85,8 @@ def product_using_accumulate(n, term):
     ...       ['Recursion', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
 
+    return accumulate(mul, 1, n , term)
 
 def compose1(func1, func2):
     """Return a function f, such that f(x) = func1(func2(x))."""
@@ -109,8 +108,11 @@ def make_repeater(func, n):
     >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times!
     5
     """
-    "*** YOUR CODE HERE ***"
-
+    if(n == 0):
+        return identity
+    def aux(n):
+        return func
+    return accumulate(compose1, func, n - 1, aux)
 
 def zero(f):
     return lambda x: x
