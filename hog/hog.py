@@ -42,6 +42,7 @@ def free_bacon(score):
     """
     assert score < 100, 'The game should be over.'
     # BEGIN PROBLEM 2
+    return 10 - (score % 10) + (score // 10 % 10)
     # END PROBLEM 2
 
 
@@ -59,7 +60,10 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     assert opponent_score < 100, 'The game should be over.'
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if(num_rolls == 0):
+        return free_bacon(opponent_score)
+    else:
+        return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -68,7 +72,10 @@ def is_swap(player_score, opponent_score):
     Return whether the two scores should be swapped
     """
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    player_ones = player_score % 10
+    opponent_ones = opponent_score % 10
+    opponent_tens = opponent_score // 10 % 10
+    return True if abs(player_ones - opponent_ones) == opponent_tens else False
     # END PROBLEM 4
 
 
@@ -108,7 +115,35 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     """
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    point0 = 0
+    point1 = 0
+    extra_point = 3
+    while(True):
+
+        num_roll = strategy0(score0, score1)
+        point = take_turn(num_roll, score1, dice)
+        if(feral_hogs and abs(num_roll - point0) == 2):
+            score0 += extra_point
+
+        point0 = point
+        score0 += point
+        if(is_swap(score0, score1)):
+            score0, score1 = score1, score0
+        if(score0 >= goal or score1 >= goal):
+            break
+
+        num_roll = strategy1(score1, score0)
+        point = take_turn(num_roll, score0, dice)
+        if(feral_hogs and abs(num_roll - point1) == 2):
+            score1 += extra_point
+
+        point1 = point
+        score1 += point
+        if(is_swap(score1, score0)):
+            score1, score0 = score0, score1
+        if(score0 >= goal or score1 >= goal):
+            break
+
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
