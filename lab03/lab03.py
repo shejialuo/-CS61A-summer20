@@ -11,7 +11,12 @@ def pascal(row, column):
     >>> pascal(3, 2)	# Row 4 (1 3 3 1), 3rd entry
     3
     """
-    "*** YOUR CODE HERE ***"
+    if(column > row):
+        return 0
+    elif(column == 0 or row == column):
+        return 1
+    else:
+        return pascal(row - 1, column) + pascal(row - 1, column - 1)
 
 
 def compose1(f, g):
@@ -39,7 +44,10 @@ def repeated(f, n):
     ...       ['For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n == 0:
+        return lambda x : x
+    else:
+        return compose1(f, repeated(f , n - 1))
 
 
 def num_eights(x):
@@ -63,7 +71,13 @@ def num_eights(x):
     ...       ['Assign', 'AugAssign'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if x == 0:
+        return 0
+    else:
+        if x % 10 == 8:
+            return num_eights(x // 10) + 1
+        else:
+            return num_eights(x // 10)
 
 
 def pingpong(n):
@@ -98,5 +112,15 @@ def pingpong(n):
     >>> check(HW_SOURCE_FILE, 'pingpong', ['Assign', 'AugAssign'])
     True
     """
-    "*** YOUR CODE HERE ***"
+
+    def helper(x, flag):
+        if x == n + 1:
+              return 0
+        else:
+            if(num_eights(x) or x % 8 == 0):
+              return flag + helper(x + 1, -flag)
+            else:
+              return flag + helper(x + 1, flag)
+
+    return helper(1, 1)
 
