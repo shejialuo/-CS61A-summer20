@@ -27,7 +27,13 @@ def reverse_recursive(lst):
     >>> cleaned = re.sub(r"#.*\\n", '', re.sub(r'"{3}[\s\S]*?"{3}', '', inspect.getsource(reverse_recursive)))
     >>> print("Do not use lst[::-1], lst.reverse(), or reversed(lst)!") if any([r in cleaned for r in ["[::", ".reverse", "reversed"]]) else None
     """
-    "*** YOUR CODE HERE ***"
+    def helper(lst, i , j):
+        if i < j:
+            lst[i], lst[j] = lst[j], lst[i]
+            helper(lst, i + 1, j - 1)
+        else:
+            return lst
+    return helper(lst, 0, len(lst) - 1)
 
 
 from math import sqrt
@@ -42,7 +48,8 @@ def distance(city_a, city_b):
     >>> distance(city_c, city_d)
     5.0
     """
-    "*** YOUR CODE HERE ***"
+    return sqrt((get_lat(city_a) - get_lat(city_b)) ** 2 +
+                (get_lon(city_a) - get_lon(city_b)) ** 2)
 
 def closer_city(lat, lon, city_a, city_b):
     """
@@ -58,7 +65,8 @@ def closer_city(lat, lon, city_a, city_b):
     >>> closer_city(41.29, 174.78, bucharest, vienna)
     'Bucharest'
     """
-    "*** YOUR CODE HERE ***"
+    temp = make_city('temp', lat ,lon)
+    return get_name(city_a) if distance(temp, city_a) < distance(temp, city_b) else get_name(city_b)
 
 def check_abstraction():
     """
@@ -166,5 +174,13 @@ def add_chars(w1, w2):
     ...       ['For', 'While', 'Set', 'SetComp']) # Must use recursion
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(w1, w2, i, j):
+        if j == len(w2):
+            return ""
+        elif i >= len(w1) or w1[i] != w2[j]:
+            return w2[j] + helper(w1, w2, i, j + 1)
+        else:
+            return helper(w1, w2, i + 1,j + 1)
+
+    return helper(w1, w2, 0, 0)
 
