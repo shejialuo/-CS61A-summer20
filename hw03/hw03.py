@@ -46,7 +46,10 @@ def g(n):
     >>> check(HW_SOURCE_FILE, 'g', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n <= 3:
+        return n
+    else:
+        return g(n - 1) + 2 * g(n - 2) + 3 * g(n - 3)
 
 def g_iter(n):
     """Return the value of G(n), computed iteratively.
@@ -66,7 +69,13 @@ def g_iter(n):
     >>> check(HW_SOURCE_FILE, 'g_iter', ['Recursion'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if n <= 3:
+        return n
+    else:
+        g1, g2, g3, i = 1, 2, 3, 3
+        while i < n:
+            g1, g2, g3, i = g2, g3, 3* g1 + 2 * g2 + g3, i + 1
+        return g3
 
 
 def missing_digits(n):
@@ -96,8 +105,13 @@ def missing_digits(n):
     >>> check(HW_SOURCE_FILE, 'missing_digits', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    if n // 10 == 0:
+        return 0
+    else:
+        if (n % 10 - n // 10 % 10) > 1:
+            return (n % 10 - n // 10 % 10 - 1) + missing_digits(n // 10)
+        else:
+            return missing_digits(n // 10)
 
 def count_change(total):
     """Return the number of ways to make change for total.
@@ -115,7 +129,14 @@ def count_change(total):
     >>> check(HW_SOURCE_FILE, 'count_change', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    def helper(n, m):
+        if n == 0:
+            return 1
+        elif n < (1 << m):
+            return 0
+        else:
+            return helper(n, m + 1) + helper(n - (1 << m), m)
+    return helper(total, 0)
 
 
 def print_move(origin, destination):
@@ -165,5 +186,5 @@ def make_anonymous_factorial():
     >>> check(HW_SOURCE_FILE, 'make_anonymous_factorial', ['Assign', 'AugAssign', 'FunctionDef', 'Recursion'])
     True
     """
-    return 'YOUR_EXPRESSION_HERE'
+    return (lambda f: lambda k: f(f, k))(lambda f , k: k if k == 1 else k * f(f, k-1) )
 
