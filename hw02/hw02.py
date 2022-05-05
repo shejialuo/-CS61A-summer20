@@ -122,11 +122,11 @@ def successor(n):
 
 def one(f):
     """Church numeral 1: same as successor(zero)"""
-    "*** YOUR CODE HERE ***"
+    return lambda x: f(x)
 
 def two(f):
     """Church numeral 2: same as successor(successor(zero))"""
-    "*** YOUR CODE HERE ***"
+    return lambda x: f(f(x))
 
 three = successor(two)
 
@@ -142,7 +142,8 @@ def church_to_int(n):
     >>> church_to_int(three)
     3
     """
-    "*** YOUR CODE HERE ***"
+    ans = n(lambda x: x + 1)(0)
+    return ans
 
 def add_church(m, n):
     """Return the Church numeral for m + n, for Church numerals m and n.
@@ -150,7 +151,14 @@ def add_church(m, n):
     >>> church_to_int(add_church(two, three))
     5
     """
-    "*** YOUR CODE HERE ***"
+
+    # Here, I don't agree with the following
+    # I think the lambda f: lambda x: m(f)(n(f)(x)) is the best answer
+    # However, `church_to_int` don't allow
+    num = church_to_int(n)
+    for i in range(num):
+        m = successor(m)
+    return m
 
 def mul_church(m, n):
     """Return the Church numeral for m * n, for Church numerals m and n.
@@ -161,7 +169,15 @@ def mul_church(m, n):
     >>> church_to_int(mul_church(three, four))
     12
     """
-    "*** YOUR CODE HERE ***"
+
+    # Here, I don't agree with the following
+    # I think the lambda f: lambda x: m(n(f)(x))(x) is the best answer
+    # However, `church_to_int` don't allow
+    ans = zero
+    num = church_to_int(n)
+    for i in range(num):
+        ans = add_church(ans, m)
+    return ans
 
 def pow_church(m, n):
     """Return the Church numeral m ** n, for Church numerals m and n.
@@ -171,5 +187,12 @@ def pow_church(m, n):
     >>> church_to_int(pow_church(three, two))
     9
     """
-    "*** YOUR CODE HERE ***"
 
+    # Here, I don't agree with the following
+    # I think the lambda f: lambda x: (nm)(f)(x) is the best answer
+    # However, `church_to_int` don't allow
+    ans = one
+    num = church_to_int(n)
+    for i in range(num):
+        ans = mul_church(ans, m)
+    return ans
