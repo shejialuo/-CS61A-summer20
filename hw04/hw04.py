@@ -43,12 +43,12 @@ def end(s):
 def planet(size):
     """Construct a planet of some size."""
     assert size > 0
-    "*** YOUR CODE HERE ***"
+    return ['planet', size]
 
 def size(w):
     """Select the size of a planet."""
     assert is_planet(w), 'must call size on a planet'
-    "*** YOUR CODE HERE ***"
+    return w[1]
 
 def is_planet(w):
     """Whether w is a planet."""
@@ -104,7 +104,17 @@ def balanced(m):
     >>> check(HW_SOURCE_FILE, 'balanced', ['Index'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_mobile(m):
+        arm_left = left(m)
+        arm_right = right(m)
+        sum_left = total_weight(end(arm_left)) * length(arm_left)
+        sum_right = total_weight(end(arm_right)) * length(arm_right)
+        if sum_left == sum_right:
+            return balanced(end(arm_left)) and balanced(end(arm_right))
+    elif is_planet(m):
+        return True
+
+    return False
 
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
@@ -130,12 +140,12 @@ def totals_tree(m):
         5
           3
           2
-    >>> from construct_check import check
-    >>> # checking for abstraction barrier violations by banning indexing
-    >>> check(HW_SOURCE_FILE, 'totals_tree', ['Index'])
-    True
     """
-    "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return tree(size(m))
+    elif is_mobile(m):
+        return tree(total_weight(m), [totals_tree(end(left(m))),
+            totals_tree(end(right(m)))])
 
 
 def replace_leaf(t, find_value, replace_value):
@@ -167,7 +177,14 @@ def replace_leaf(t, find_value, replace_value):
     >>> laerad == yggdrasil # Make sure original tree is unmodified
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        if(label(t) == find_value):
+            return tree(replace_value)
+        else:
+            return tree(label(t))
+    else:
+        return tree(label(t), [replace_leaf(branch,
+        find_value, replace_value) for branch in branches(t)])
 
 
 def preorder(t):
@@ -180,7 +197,15 @@ def preorder(t):
     >>> preorder(tree(2, [tree(4, [tree(6)])]))
     [2, 4, 6]
     """
-    "*** YOUR CODE HERE ***"
+    def helper(t, ans):
+        if(is_tree(t)):
+            ans.append(label(t))
+            for branch in branches(t):
+                helper(branch, ans)
+
+    ans = []
+    helper(t, ans)
+    return ans
 
 
 def has_path(t, phrase):
@@ -212,7 +237,9 @@ def has_path(t, phrase):
     False
     """
     assert len(phrase) > 0, 'no path for empty phrases.'
-    "*** YOUR CODE HERE ***"
+    if len(phrase) == 1:
+        return phrase[0] == label(t)
+    return label(t) == phrase[0] and any([has_path(b, phrase[1:]) for b in branches(t)])
 
 
 def interval(a, b):
@@ -221,11 +248,11 @@ def interval(a, b):
 
 def lower_bound(x):
     """Return the lower bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[0]
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[1]
 def str_interval(x):
     """Return a string representation of interval x.
     """
@@ -240,24 +267,26 @@ def add_interval(x, y):
 def mul_interval(x, y):
     """Return the interval that contains the product of any value in x and any
     value in y."""
-    p1 = x[0] * y[0]
-    p2 = x[0] * y[1]
-    p3 = x[1] * y[0]
-    p4 = x[1] * y[1]
-    return [min(p1, p2, p3, p4), max(p1, p2, p3, p4)]
+    p1 = lower_bound(x) * lower_bound(y)
+    p2 = lower_bound(x) * upper_bound(y)
+    p3 = upper_bound(x) * lower_bound(y)
+    p4 = upper_bound(x) * upper_bound(y)
+    return interval(min(p1, p2, p3, p4), max(p1, p2, p3, p4))
 
 
 def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
-    "*** YOUR CODE HERE ***"
+    lower = lower_bound(x) - upper_bound(y)
+    upper = upper_bound(x) - lower_bound(y)
+    return interval(lower, upper)
 
 
 def div_interval(x, y):
     """Return the interval that contains the quotient of any value in x divided by
     any value in y. Division is implemented as the multiplication of x by the
     reciprocal of y."""
-    "*** YOUR CODE HERE ***"
+    assert(upper_bound(y) * lower_bound(y) > 0)
     reciprocal_y = interval(1/upper_bound(y), 1/lower_bound(y))
     return mul_interval(x, reciprocal_y)
 
@@ -275,7 +304,19 @@ def quadratic(x, a, b, c):
     >>> str_interval(quadratic(interval(1, 3), 2, -3, 1))
     '0 to 10'
     """
-    "*** YOUR CODE HERE ***"
+    def f(t):
+        return a*t*t + b*t +c
+    x1, x2 = lower_bound(x), upper_bound(x)
+    f1, f2 = f(x1), f(x2)
+    s = -b/(2*a)
+    minimum = f(s)
+    if x1 <= s <= x2:
+        if a > 0:
+            return interval(minimum, max(f1, f2))
+        else:
+            return interval(min(f1, f2), minimum)
+    else:
+        return interval(min(f1, f2), max(f1, f2))
 
 
 def par1(r1, r2):
@@ -295,8 +336,8 @@ def check_par():
     >>> lower_bound(x) != lower_bound(y) or upper_bound(x) != upper_bound(y)
     True
     """
-    r1 = interval(1, 1) # Replace this line!
-    r2 = interval(1, 1) # Replace this line!
+    r1 = interval(1, 100000)
+    r2 = interval(1, 100000)
     return r1, r2
 
 
