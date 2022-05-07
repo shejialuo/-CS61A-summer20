@@ -16,7 +16,13 @@ def choose(paragraphs, select, k):
     the empty string.
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    index = 0
+    for paragraph in paragraphs:
+        if(select(paragraph)):
+            if(index == k):
+                return paragraph
+            index += 1
+    return ''
     # END PROBLEM 1
 
 
@@ -32,7 +38,12 @@ def about(topic):
     """
     assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    def helper(paragraph):
+        for word in split(remove_punctuation(paragraph)):
+            if word in topic or lower(word) in topic:
+                return True
+        return False
+    return helper
     # END PROBLEM 2
 
 
@@ -56,7 +67,14 @@ def accuracy(typed, reference):
     typed_words = split(typed)
     reference_words = split(reference)
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    if(len(typed_words) == 0):
+        return 0.0
+    equal_num = 0
+    for word1, word2 in zip(typed_words, reference_words):
+        if(word1 == word2):
+            equal_num += 1
+
+    return equal_num / len(typed_words) * 100
     # END PROBLEM 3
 
 
@@ -64,7 +82,7 @@ def wpm(typed, elapsed):
     """Return the words-per-minute (WPM) of the TYPED string."""
     assert elapsed > 0, 'Elapsed time must be positive'
     # BEGIN PROBLEM 4
-    "*** YOUR CODE HERE ***"
+    return len(typed) / 5 / (elapsed / 60)
     # END PROBLEM 4
 
 
@@ -74,7 +92,15 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     than LIMIT.
     """
     # BEGIN PROBLEM 5
-    "*** YOUR CODE HERE ***"
+    if user_word in valid_words:
+        return user_word
+
+    min_word = min(valid_words, key=lambda word: diff_function(user_word, word, limit))
+
+    if(diff_function(user_word, min_word, limit) > limit):
+        return user_word
+
+    return min_word
     # END PROBLEM 5
 
 
@@ -84,30 +110,39 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if len(start) == 0:
+        return len(goal)
+    if len(goal) == 0:
+        return len(start)
+    if start[0] != goal[0]:
+        if limit == 0:
+            return 1
+        return 1 + shifty_shifts(start[1:], goal[1:], limit - 1)
+    else:
+        return shifty_shifts(start[1:], goal[1:], limit)
     # END PROBLEM 6
 
 
 def meowstake_matches(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
 
-    if ______________: # Fill in the condition
+    if limit < 0:
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return 0
         # END
 
-    elif ___________: # Feel free to remove or add additional cases
+    elif len(start) == 0 or len(goal) == 0:
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return len(start) + len(goal)
         # END
-
+    elif start[0] == goal[0]:
+        return meowstake_matches(start[1:], goal[1:], limit)
     else:
-        add_diff = ...  # Fill in these lines
-        remove_diff = ... 
-        substitute_diff = ... 
+        add_diff = meowstake_matches(start, goal[1:], limit - 1)
+        remove_diff = meowstake_matches(start[1:], goal, limit - 1)
+        substitute_diff = meowstake_matches(start[1:], goal[1:], limit - 1)
         # BEGIN
-        "*** YOUR CODE HERE ***"
+        return 1 + min(min(add_diff, remove_diff), substitute_diff)
         # END
 
 
@@ -124,7 +159,15 @@ def final_diff(start, goal, limit):
 def report_progress(typed, prompt, id, send):
     """Send a report of your id and progress so far to the multiplayer server."""
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    num = 0
+    for word1, word2 in zip(typed, prompt):
+        if(word1 == word2):
+            num += 1
+        else:
+            break
+    progress = num / len(prompt)
+    send({'id': id, 'progress': progress})
+    return progress
     # END PROBLEM 8
 
 
@@ -150,7 +193,13 @@ def time_per_word(times_per_player, words):
         words: a list of words, in the order they are typed.
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    t = list()
+    for player in times_per_player:
+        time = []
+        for i in range(len(player) - 1):
+            time.append(player[i + 1] - player[i])
+        t.append(time)
+    return game(words, t)
     # END PROBLEM 9
 
 
@@ -165,7 +214,15 @@ def fastest_words(game):
     players = range(len(all_times(game)))  # An index for each player
     words = range(len(all_words(game)))    # An index for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    words = all_words(game)
+    times = all_times(game)
+    t_player = len(times)
+    fastest = [[] for i in range(t_player)]
+    for i, word in enumerate(words):
+        word_times = [times[player][i] for player in range(t_player)]
+        idx = min(range(t_player), key=lambda x: word_times[x])
+        fastest[idx].append(word)
+    return fastest
     # END PROBLEM 10
 
 
