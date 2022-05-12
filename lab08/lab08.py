@@ -32,5 +32,13 @@ def make_generators_generator(g):
     6
     9
     """
-    "*** YOUR CODE HERE ***"
+    def helper(num_iterate):
+        iter_value = g()
+        for _ in range(num_iterate):
+            yield next(iter_value)
+
+    num = 1
+    for _ in g():
+        yield helper(num)
+        num += 1
 
