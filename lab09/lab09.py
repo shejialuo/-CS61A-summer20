@@ -7,8 +7,12 @@ def convert_link(link):
     >>> convert_link(Link.empty)
     []
     """
-    "*** YOUR CODE HERE ***"
+    result = []
+    while link is not Link.empty:
+        result.append(link.first)
+        link = link.rest
 
+    return result
 
 def every_other(s):
     """Mutates a linked list so that all the odd-indiced elements are removed
@@ -27,7 +31,14 @@ def every_other(s):
     >>> singleton
     Link(4)
     """
-    "*** YOUR CODE HERE ***"
+    i = 0
+    while s is not Link.empty:
+        if ((i + 1 ) % 2 != 0):
+            if (s.rest is not Link.empty):
+                s.rest = s.rest.rest
+                i = i + 1
+        s = s.rest
+        i = i + 1
 
 
 def label_squarer(t):
@@ -38,7 +49,12 @@ def label_squarer(t):
     >>> t
     Tree(1, [Tree(9, [Tree(25)]), Tree(49)])
     """
-    "*** YOUR CODE HERE ***"
+    t.label = t.label * t.label
+    if t.is_leaf():
+        return
+    else:
+        for branch in t.branches:
+            label_squarer(branch)
 
 
 def cumulative_mul(t):
@@ -50,7 +66,18 @@ def cumulative_mul(t):
     >>> t
     Tree(105, [Tree(15, [Tree(5)]), Tree(7)])
     """
-    "*** YOUR CODE HERE ***"
+    root = t
+
+    def helper(root):
+        if root.is_leaf():
+            return root.label
+        else:
+            mul_num = 1
+            for branch in root.branches:
+                mul_num *= helper(branch)
+            root.label *= mul_num
+            return root.label
+    helper(root)
 
 
 def has_cycle(link):
@@ -67,7 +94,15 @@ def has_cycle(link):
     >>> has_cycle(u)
     False
     """
-    "*** YOUR CODE HERE ***"
+    isVisited = []
+    while link is not Link.empty:
+        if(link in isVisited):
+            return True
+        else:
+            isVisited.append(link)
+        link = link.rest
+
+    return False
 
 def has_cycle_constant(link):
     """Return whether link contains a cycle.
@@ -80,7 +115,18 @@ def has_cycle_constant(link):
     >>> has_cycle_constant(t)
     False
     """
-    "*** YOUR CODE HERE ***"
+    low_pointer = link
+    fast_pointer = link
+    while fast_pointer is not Link.empty:
+        fast_pointer = fast_pointer.rest
+
+        if(fast_pointer is not Link.empty):
+            low_pointer = low_pointer.rest
+            fast_pointer = fast_pointer.rest
+        if(low_pointer == fast_pointer):
+            return True
+
+    return False
 
 
 def reverse_other(t):
@@ -96,7 +142,16 @@ def reverse_other(t):
     >>> t
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
-    "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return
+    label_list = []
+    for b in t.branches:
+        label_list.append(b.label)
+    for b, new_label in zip(t.branches, reversed(label_list)):
+        b.label = new_label
+        for bb in b.branches:
+            reverse_other(bb)
+
 
 
 class Link:
