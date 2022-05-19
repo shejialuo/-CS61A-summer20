@@ -26,6 +26,12 @@ def read(s):
     SyntaxError: expected ':' but got 'y'
     >>> read('  ')  # returns None
     """
+
+    #
+    # * First, it should tokenize the input, and use
+    # * `Buffer` to wrapper it. The `tokenize` returns
+    # * list
+    #
     src = Buffer(tokenize(s))
     if src.current() is not None:
         return read_expr(src)
@@ -54,6 +60,18 @@ def take(src, allowed_characters):
     return result
 
 def next_token(src):
+    """
+    `next_token` is used to calculate the token,
+    the idea is simple, first, we need to remove
+    the whitespace, second we get the current value
+    in the buffer, if it is numeral, just return by
+    type conversion, if it is symbol, we need to find
+    the whole symbol name, so we use auxiliary `take`
+    function to get it. If we meet the delimiter,
+    we just return the value and make the pointer to
+    the next value
+    """
+
     take(src, WHITESPACE)  # skip whitespace
     c = src.current()
     if c is None:
@@ -85,6 +103,16 @@ def is_name(s):
 ## Parser ##
 ############
 def read_expr(src):
+    """
+    `read_expr` accepts the token buffer:
+
+    + For number (int or float): wrap it with `Literal(token)`.
+    + For symbol and string: wrap it with `Name(token)`.
+    + For lambda expression,  TODO: add comments
+    +
+
+    """
+
     token = src.pop_first()
     if token is None:
         raise SyntaxError('Incomplete expression')
