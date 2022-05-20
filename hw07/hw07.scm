@@ -2,38 +2,59 @@
   (cdr (cdr s)))
 
 (define (cadr s)
-  'YOUR-CODE-HERE
+  (car (cdr s))
 )
 
 (define (caddr s)
-  'YOUR-CODE-HERE
+  (car (cddr s))
 )
 
 
 (define (sign num)
-  'YOUR-CODE-HERE
+  (cond
+      ((> num 0) 1)
+      ((= num 0) 0)
+      (else -1)
+  )
 )
 
 
 (define (square x) (* x x))
 
 (define (pow x y)
-  'YOUR-CODE-HERE
+  (cond
+    ((= y 0) 1)
+    ((even? y) (square (pow x (/ y 2))))
+    (else (* (square (pow x (/ (- y 1) 2 ))) x))
+  )
 )
 
 
 (define (unique s)
-  'YOUR-CODE-HERE
+  (cond
+    ((null? s) nil)
+    (else
+        (cons (car s)
+          (unique (filter (lambda (x) (not (eq? (car s) x))) (cdr s)))
+        )
+    )
+  )
 )
 
 
 (define (replicate x n)
-  'YOUR-CODE-HERE
+  (define (helper x n y)
+    (if (= n 0)
+      y
+      (helper x (- n 1) (cons x y))
+    )
   )
+  (helper x n nil)
+)
 
 
 (define (accumulate combiner start n term)
-  'YOUR-CODE-HERE
+
 )
 
 
