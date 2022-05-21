@@ -54,16 +54,30 @@
 
 
 (define (accumulate combiner start n term)
-
+  (define (helper i)
+    (cond
+      ((= i n) (term i))
+      (else (combiner (term i) (helper (+ i 1))))
+    )
+  )
+  (combiner start (helper 1))
 )
 
 
 (define (accumulate-tail combiner start n term)
-  'YOUR-CODE-HERE
+  (define (helper i result)
+    (cond
+      ((= i (+ n 1)) result)
+      (else (helper (+ i 1) (combiner (term i) result)))
+    )
+  )
+  (helper 1 start)
 )
 
 
 (define-macro (list-of map-expr for var in lst if filter-expr)
-  'YOUR-CODE-HERE
+  (list 'map (list 'lambda (list var) map-expr)
+    (list 'filter (list 'lambda (list var) filter-expr) lst)
+  )
 )
 
