@@ -35,7 +35,10 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
         return SPECIAL_FORMS[first](rest, env)
     else:
         # BEGIN PROBLEM 4
-        "*** YOUR CODE HERE ***"
+        operator = scheme_eval(first, env)
+        validate_procedure(operator)
+        args = rest.map(lambda expr: scheme_eval(expr, env))
+        return scheme_apply(operator, args, env)
         # END PROBLEM 4
 
 def self_evaluating(expr):
@@ -248,7 +251,8 @@ def do_define_form(expressions, env):
     if scheme_symbolp(target):
         validate_form(expressions, 2, 2) # Checks that expressions is a list of length exactly 2
         # BEGIN PROBLEM 5
-        "*** YOUR CODE HERE ***"
+        env.define(target, scheme_eval(expressions.rest.first, env))
+        return target
         # END PROBLEM 5
     elif isinstance(target, Pair) and scheme_symbolp(target.first):
         # BEGIN PROBLEM 9
@@ -267,7 +271,7 @@ def do_quote_form(expressions, env):
     """
     validate_form(expressions, 1, 1)
     # BEGIN PROBLEM 6
-    "*** YOUR CODE HERE ***"
+    return expressions.first
     # END PROBLEM 6
 
 def do_begin_form(expressions, env):
