@@ -347,7 +347,15 @@ def do_and_form(expressions, env):
     False
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return True
+    p = expressions
+    while p is not nil:
+        value = scheme_eval(p.first, env)
+        if is_false_primitive(value):
+            return False
+        p = p.rest
+    return value
     # END PROBLEM 12
 
 def do_or_form(expressions, env):
@@ -364,7 +372,15 @@ def do_or_form(expressions, env):
     6
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    if expressions is nil:
+        return False
+    p = expressions
+    while p is not nil:
+        value = scheme_eval(p.first, env)
+        if is_true_primitive(value):
+            return value
+        p = p.rest
+    return False
     # END PROBLEM 12
 
 def do_cond_form(expressions, env):
@@ -384,7 +400,10 @@ def do_cond_form(expressions, env):
             test = scheme_eval(clause.first, env)
         if is_true_primitive(test):
             # BEGIN PROBLEM 13
-            "*** YOUR CODE HERE ***"
+            if clause.rest is nil:
+                return test
+            else:
+                return eval_all(clause.rest, env)
             # END PROBLEM 13
         expressions = expressions.rest
 
